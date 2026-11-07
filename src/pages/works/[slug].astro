@@ -1,0 +1,748 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { siteConfig } from '../../config';
+import { getNextProject, projects } from '../../data/projects';
+import { withBase } from '../../lib/paths';
+
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: {
+      project,
+      nextProject: getNextProject(project.slug),
+    },
+  }));
+}
+
+const { project, nextProject } = Astro.props;
+
+const description = project.description ?? [];
+
+const metaDescription =
+  project.summary ??
+  description[0] ??
+  `${project.title} — ${project.category}.`;
+
+const nextMeta = [nextProject.client, nextProject.category, nextProject.year]
+  .filter(Boolean)
+  .join(' — ');
+---
+
+<BaseLayout
+  page="works"
+  title={project.title}
+  description={metaDescription}
+  image={project.poster}
+  ogType="article"
+>
+  <main id="main">
+    <article class="project">
+      <section class="project-hero" aria-labelledby="project-title">
+        <video
+          class="project-hero__media"
+          poster={withBase(project.poster)}
+          data-autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          aria-hidden="true"
+          tabindex="-1"
+          style={`object-position: ${project.heroPosition ?? 'center'}`}
+        >
+          <source src={withBase(project.video)} type="video/mp4" />
+        </video>
+
+        <div class="project-hero__shade" aria-hidden="true"></div>
+
+        <div class="project-hero__top">
+          <p class="eyebrow">
+            {project.number}{project.client ? ` — ${project.client}` : ''}
+          </p>
+          <p class="eyebrow">
+            {project.category}{project.year ? ` / ${project.year}` : ''}
+          </p>
+        </div>
+
+        <div class="project-hero__inner wrap">
+          <div class="project-hero__foot">
+            <h1 id="project-title" class="project-hero__title serif">{project.title}</h1>
+            <div class:list={['project-hero__sub', !project.tagline && 'project-hero__sub--minimal']}>
+              {project.tagline && <p class="project-hero__tagline">{project.tagline}</p>}
+              <p class="eyebrow">Scroll to view</p>
+            </div>
+          </div>
+        </div>
+
+        <a
+          class="project-hero__scroll"
+          href="#film"
+          aria-label="Scroll to the film"
+        >
+          <span aria-hidden="true"></span>
+        </a>
+      </section>
+
+      <section class="project-film" id="film" aria-labelledby="film-title">
+        <div class="wrap">
+          <div class="project-section-head">
+            <h2 id="film-title" class="eyebrow">01 — The film</h2>
+            <p class="eyebrow eyebrow--muted">Sound on · Loop</p>
+          </div>
+
+          <div class="player" data-player>
+            <video
+              class="player__video"
+              poster={withBase(project.poster)}
+              loop
+              playsinline
+              preload="metadata"
+              data-player-video
+              data-cursor="PLAY"
+            >
+              <source src={withBase(project.video)} type="video/mp4" />
+            </video>
+
+            <button
+              class="player__center"
+              type="button"
+              data-player-toggle
+              aria-label="Play film"
+              tabindex="-1"
+            >
+              <span class="player__center-ring" aria-hidden="true"></span>
+              <svg viewBox="0 0 20 22" aria-hidden="true">
+                <path d="M1 1.5 19 11 1 20.5Z" fill="currentColor"></path>
+              </svg>
+            </button>
+
+            <div class="player__controls">
+              <button
+                class="player__toggle"
+                type="button"
+                data-player-toggle
+                aria-label="Play film"
+              >
+                <svg class="icon-play" viewBox="0 0 12 14" aria-hidden="true">
+                  <path d="M0 0 12 7 0 14Z" fill="currentColor"></path>
+                </svg>
+                <svg class="icon-pause" viewBox="0 0 10 14" aria-hidden="true">
+                  <rect width="3" height="14" fill="currentColor"></rect>
+                  <rect x="7" width="3" height="14" fill="currentColor"></rect>
+                </svg>
+              </button>
+
+              <span class="player__time" data-player-time>00:00</span>
+
+              <input
+                class="player__range"
+                type="range"
+                min="0"
+                max="100"
+                step="0.1"
+                value="0"
+                aria-label="Seek through film"
+                data-player-range
+              />
+
+              <span class="player__time player__time--duration" data-player-duration>00:00</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="project-next" aria-labelledby="next-title">
+        <a
+          class="project-next__link"
+          href={withBase(`/works/${nextProject.slug}/`)}
+          data-cursor="NEXT"
+        >
+          <div
+            class="project-next__media"
+            style={`background-image: url('${withBase(nextProject.poster)}')`}
+            aria-hidden="true"
+          ></div>
+          <div class="project-next__shade" aria-hidden="true"></div>
+
+          <div class="project-next__inner wrap">
+            <p class="eyebrow">Next project — {nextProject.number}</p>
+
+            <div class="project-next__row">
+              <h2 id="next-title" class="project-next__title serif">{nextProject.title}</h2>
+              <span class="project-next__arrow" aria-hidden="true">↗</span>
+            </div>
+
+            <p class="project-next__meta">{nextMeta}</p>
+          </div>
+        </a>
+      </section>
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+  .project-hero {
+    position: relative;
+    display: flex;
+    height: 100svh;
+    min-height: 620px;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .project-hero__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.85) contrast(1.03);
+  }
+
+  .project-hero__shade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        180deg,
+        rgba(9, 8, 7, 0.56) 0%,
+        rgba(9, 8, 7, 0.02) 30%,
+        rgba(9, 8, 7, 0.04) 55%,
+        rgba(9, 8, 7, 0.72) 100%
+      ),
+      radial-gradient(ellipse at center, transparent 42%, rgba(9, 8, 7, 0.26) 100%);
+  }
+
+  .project-hero__inner {
+    position: relative;
+    z-index: 1;
+    padding-bottom: clamp(6.5rem, 15vh, 9.5rem);
+  }
+
+  .project-hero__top {
+    position: absolute;
+    top: calc(var(--header-h) + 1.4rem);
+    right: var(--pad);
+    left: var(--pad);
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: rgba(247, 243, 235, 0.82);
+  }
+
+  .project-hero__foot {
+    margin-top: 16vh;
+  }
+
+  .project-hero__title {
+    max-width: 12ch;
+    font-size: clamp(3.4rem, 11.4vw, 13rem);
+    line-height: 0.82;
+    letter-spacing: -0.045em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .project-hero__sub {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-top: clamp(1.2rem, 2.5vw, 2rem);
+    padding-top: clamp(1rem, 2vw, 1.4rem);
+    border-top: 1px solid rgba(247, 243, 235, 0.26);
+  }
+
+  .project-hero__sub--minimal {
+    justify-content: flex-end;
+  }
+
+  .project-hero__tagline {
+    max-width: 34ch;
+    font-family: var(--font-serif);
+    font-size: clamp(1rem, 1.4vw, 1.35rem);
+    font-style: italic;
+    line-height: 1.35;
+  }
+
+  .project-hero__sub .eyebrow {
+    color: rgba(247, 243, 235, 0.64);
+    white-space: nowrap;
+  }
+
+  .project-hero__scroll {
+    position: absolute;
+    right: var(--pad);
+    bottom: 1.9rem;
+    left: var(--pad);
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .project-hero__scroll span {
+    display: block;
+    width: 1px;
+    height: 2.5rem;
+    background: linear-gradient(to bottom, transparent, rgba(247, 243, 235, 0.7));
+    animation: scroll-line 2.4s var(--ease) infinite;
+    transform-origin: top center;
+  }
+
+  @keyframes scroll-line {
+    0% {
+      transform: scaleY(0);
+      opacity: 0;
+    }
+    35% {
+      opacity: 1;
+    }
+    70%,
+    100% {
+      transform: scaleY(1);
+      opacity: 0;
+    }
+  }
+
+  .project-film {
+    padding-top: clamp(4rem, 8vw, 7rem);
+    padding-bottom: clamp(4rem, 9vw, 8rem);
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+  }
+
+  .project-section-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .player {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
+    background: var(--ink);
+  }
+
+  .player__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+  }
+
+  .player::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 26%;
+    background: linear-gradient(to top, rgba(9, 8, 7, 0.7), transparent);
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.4s linear;
+  }
+
+  .player.is-playing::after {
+    opacity: 0.55;
+  }
+
+  .player__center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    display: grid;
+    width: clamp(4.4rem, 6.5vw, 6rem);
+    height: clamp(4.4rem, 6.5vw, 6rem);
+    place-items: center;
+    border: 1px solid rgba(247, 243, 235, 0.55);
+    border-radius: 50%;
+    background: rgba(20, 19, 17, 0.18);
+    color: var(--paper);
+    transform: translate(-50%, -50%);
+    backdrop-filter: blur(8px);
+    transition:
+      opacity 0.35s var(--ease),
+      transform 0.35s var(--ease),
+      background-color 0.35s var(--ease),
+      color 0.35s var(--ease);
+  }
+
+  .player__center svg {
+    width: 1.1rem;
+    margin-left: 0.15rem;
+  }
+
+  .player__center-ring {
+    position: absolute;
+    inset: -0.55rem;
+    border: 1px solid rgba(247, 243, 235, 0.18);
+    border-radius: 50%;
+    transition: transform 0.5s var(--ease);
+  }
+
+  .player__center:hover {
+    background: var(--lilac);
+    color: var(--ink);
+  }
+
+  .player__center:hover .player__center-ring {
+    transform: scale(1.06);
+  }
+
+  .player.is-playing .player__center {
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+
+  .player__controls {
+    position: absolute;
+    right: clamp(0.75rem, 2vw, 1.5rem);
+    bottom: clamp(0.75rem, 2vw, 1.5rem);
+    left: clamp(0.75rem, 2vw, 1.5rem);
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: var(--paper);
+  }
+
+  .player__toggle {
+    display: grid;
+    width: 2.1rem;
+    height: 2.1rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid rgba(247, 243, 235, 0.42);
+    border-radius: 50%;
+    transition:
+      background-color 0.3s var(--ease),
+      color 0.3s var(--ease),
+      border-color 0.3s var(--ease);
+  }
+
+  .player__toggle svg {
+    width: 0.62rem;
+  }
+
+  .player__toggle:hover {
+    border-color: var(--lilac);
+    background: var(--lilac);
+    color: var(--ink);
+  }
+
+  .player:not(.is-playing) .icon-pause {
+    display: none;
+  }
+
+  .player.is-playing .icon-play {
+    display: none;
+  }
+
+  .player__time {
+    flex: 0 0 auto;
+    font-size: 0.55rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+  }
+
+  .player__time--duration {
+    color: rgba(247, 243, 235, 0.62);
+  }
+
+  .player__range {
+    width: 100%;
+    height: 1rem;
+    margin: 0;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .player__range::-webkit-slider-runnable-track {
+    height: 1px;
+    background: rgba(247, 243, 235, 0.35);
+  }
+
+  .player__range::-moz-range-track {
+    height: 1px;
+    background: rgba(247, 243, 235, 0.35);
+  }
+
+  .player__range::-webkit-slider-thumb {
+    width: 9px;
+    height: 9px;
+    margin-top: -4px;
+    appearance: none;
+    border: 0;
+    border-radius: 50%;
+    background: var(--lilac);
+  }
+
+  .player__range::-moz-range-thumb {
+    width: 9px;
+    height: 9px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--lilac);
+  }
+
+  .project-next {
+    position: relative;
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .project-next__link {
+    position: relative;
+    display: flex;
+    min-height: 72svh;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .project-next__media {
+    position: absolute;
+    inset: 0;
+    background-position: center;
+    background-size: cover;
+    filter: saturate(0.7);
+    opacity: 0.52;
+    transform: scale(1.02);
+    transition:
+      transform 1.2s var(--ease),
+      opacity 0.6s linear;
+  }
+
+  .project-next__link:hover .project-next__media {
+    opacity: 0.66;
+    transform: scale(1.06);
+  }
+
+  .project-next__shade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to top, rgba(9, 8, 7, 0.92), rgba(9, 8, 7, 0.15) 70%),
+      linear-gradient(to bottom, rgba(9, 8, 7, 0.55), transparent 30%);
+  }
+
+  .project-next__inner {
+    position: relative;
+    z-index: 1;
+    padding-top: clamp(5rem, 10vw, 9rem);
+    padding-bottom: clamp(3rem, 7vw, 5.5rem);
+  }
+
+  .project-next__row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-top: clamp(1rem, 3vw, 2rem);
+  }
+
+  .project-next__title {
+    font-size: clamp(3rem, 10vw, 10.5rem);
+    line-height: 0.82;
+    letter-spacing: -0.045em;
+    text-transform: uppercase;
+  }
+
+  .project-next__arrow {
+    display: grid;
+    width: clamp(3.5rem, 6vw, 5.5rem);
+    height: clamp(3.5rem, 6vw, 5.5rem);
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid rgba(247, 243, 235, 0.42);
+    border-radius: 50%;
+    font-size: clamp(1.2rem, 2vw, 1.8rem);
+    transition:
+      background-color 0.4s var(--ease),
+      color 0.4s var(--ease),
+      transform 0.5s var(--ease);
+  }
+
+  .project-next__link:hover .project-next__arrow {
+    background: var(--lilac);
+    color: var(--ink);
+    transform: rotate(45deg);
+  }
+
+  .project-next__meta {
+    margin-top: clamp(1rem, 2vw, 1.5rem);
+    color: rgba(247, 243, 235, 0.62);
+    font-size: 0.5625rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 760px) {
+    .project-hero {
+      min-height: 560px;
+    }
+
+    .project-hero__top {
+      top: calc(var(--header-h) + 0.5rem);
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .project-hero__foot {
+      margin-top: 22vh;
+    }
+
+    .project-hero__title {
+      font-size: clamp(2.9rem, 14vw, 5.5rem);
+    }
+
+    .project-hero__sub {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.9rem;
+    }
+
+    .project-hero__scroll {
+      display: none;
+    }
+
+    .player {
+      aspect-ratio: 4 / 3;
+      margin-right: calc(var(--pad) * -1);
+      margin-left: calc(var(--pad) * -1);
+    }
+
+    .player__center {
+      width: 4rem;
+      height: 4rem;
+    }
+
+    .player__time--duration {
+      display: none;
+    }
+
+    .project-next__link {
+      min-height: 62svh;
+    }
+
+    .project-next__row {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 1.4rem;
+    }
+  }
+</style>
+
+<script>
+  const player = document.querySelector<HTMLElement>('[data-player]');
+
+  if (player) {
+    const video = player.querySelector<HTMLVideoElement>('[data-player-video]');
+    const toggles = Array.from(player.querySelectorAll<HTMLButtonElement>('[data-player-toggle]'));
+    const range = player.querySelector<HTMLInputElement>('[data-player-range]');
+    const time = player.querySelector<HTMLElement>('[data-player-time]');
+    const durationLabel = player.querySelector<HTMLElement>('[data-player-duration]');
+
+    const formatTime = (seconds: number) => {
+      if (!Number.isFinite(seconds)) return '00:00';
+      const minutes = Math.floor(seconds / 60);
+      const rest = Math.floor(seconds % 60);
+      return `${String(minutes).padStart(2, '0')}:${String(rest).padStart(2, '0')}`;
+    };
+
+    const sync = () => {
+      if (!video) return;
+      const playing = !video.paused;
+      player.classList.toggle('is-playing', playing);
+
+      toggles.forEach((toggle) => {
+        toggle.setAttribute('aria-label', playing ? 'Pause film' : 'Play film');
+      });
+
+      if (range) {
+        range.value = video.duration ? String((video.currentTime / video.duration) * 100) : '0';
+      }
+
+      if (time) time.textContent = formatTime(video.currentTime);
+    };
+
+    const togglePlayback = () => {
+      if (!video) return;
+      if (video.paused) {
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
+    };
+
+    toggles.forEach((toggle) => toggle.addEventListener('click', togglePlayback));
+
+    video?.addEventListener('click', togglePlayback);
+    video?.addEventListener('play', sync);
+    video?.addEventListener('pause', sync);
+    video?.addEventListener('ended', sync);
+
+    video?.addEventListener('timeupdate', () => {
+      if (!video || !range) return;
+      if (video.duration) {
+        range.value = String((video.currentTime / video.duration) * 100);
+      }
+      if (time) time.textContent = formatTime(video.currentTime);
+    });
+
+    video?.addEventListener('loadedmetadata', () => {
+      if (durationLabel) durationLabel.textContent = formatTime(video.duration);
+      if (time) time.textContent = formatTime(video.currentTime);
+    });
+
+    range?.addEventListener('input', () => {
+      if (!video || !video.duration) return;
+      video.currentTime = (Number(range.value) / 100) * video.duration;
+    });
+
+    // Pause the film when it scrolls out of view.
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) video?.pause();
+          });
+        },
+        { threshold: 0.2 },
+      );
+      observer.observe(player);
+    }
+  }
+
+  // Pause / resume the full-bleed hero as it enters and leaves the viewport.
+  const heroVideo = document.querySelector<HTMLVideoElement>('.project-hero__media');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hero = document.querySelector<HTMLElement>('.project-hero');
+
+  if (heroVideo && hero && !reduceMotion && 'IntersectionObserver' in window) {
+    const heroObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            heroVideo.play().catch(() => {});
+          } else {
+            heroVideo.pause();
+          }
+        });
+      },
+      { threshold: 0.1 },
+    );
+
+    heroObserver.observe(hero);
+  }
+</script>

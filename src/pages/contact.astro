@@ -1,0 +1,416 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '../config';
+
+const { email, socials, role } = siteConfig;
+---
+
+<BaseLayout
+  page="contact"
+  title="Contact"
+  description={`Work with ${siteConfig.brand.full} — video editing and AI visuals for real estate and sports.`}
+>
+  <main id="main" class="contact-page">
+    <header class="contact-hero wrap">
+      <div class="page-head">
+        <p class="eyebrow">Contact</p>
+        <p class="eyebrow eyebrow--muted">{role}</p>
+      </div>
+
+      <div class="contact-hero__body">
+        <h1 class="contact-hero__title serif">
+          Work<br />with <em>me.</em>
+        </h1>
+        <p class="contact-hero__note">
+          Video editor &amp; AI creator. I turn raw footage into content that moves.
+        </p>
+      </div>
+
+      <div class="contact-email">
+        <div class="contact-email__label">
+          <span class="eyebrow">Email</span>
+          <span class="contact-email__status">
+            <span aria-hidden="true"></span>
+            Get in touch
+          </span>
+        </div>
+
+        <div class="contact-email__row">
+          <a
+            class="contact-email__link link-line"
+            href={`mailto:${email}`}
+            data-cursor="WRITE"
+          >
+            {email}
+          </a>
+
+          <button
+            class="contact-email__copy"
+            type="button"
+            data-copy
+            data-email={email}
+            data-cursor="COPY"
+            aria-label={`Copy email address ${email}`}
+          >
+            <span data-copy-label aria-live="polite">Copy email</span>
+            <span class="contact-email__copy-icon" aria-hidden="true">⧉</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <section class="contact-body wrap" aria-label="Contact details">
+      <div class="contact-panel">
+        <div class="contact-block reveal">
+          <p class="eyebrow eyebrow--muted">Projects</p>
+          <p class="contact-block__lead serif">For edits, AI visuals and collaborations.</p>
+          <a class="contact-block__link link-line" href={`mailto:${email}`}>
+            {email}
+          </a>
+        </div>
+
+        <div class="contact-block reveal">
+          <p class="eyebrow eyebrow--muted">Instagram</p>
+          <p class="contact-block__lead serif">Follow the work.</p>
+          <a
+            class="contact-block__link link-line"
+            href={socials[0].href}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            @simsim_motion
+            <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-note wrap">
+      <p class="eyebrow">Before you write</p>
+      <p class="contact-note__text serif">
+        A sentence about the footage, the idea and the timeline helps me answer properly.
+        Good work starts with a good conversation.
+      </p>
+      <p class="contact-note__script" aria-hidden="true">{siteConfig.tagline}</p>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .contact-page {
+    padding-top: calc(var(--header-h) + clamp(1.5rem, 4vh, 3.5rem));
+  }
+
+  .contact-hero {
+    padding-bottom: clamp(4rem, 9vw, 7rem);
+  }
+
+  .contact-hero__body {
+    display: grid;
+    grid-template-columns: minmax(0, 2.2fr) minmax(16rem, 0.8fr);
+    align-items: end;
+    gap: var(--gap);
+    margin-top: clamp(2.6rem, 7vw, 6rem);
+  }
+
+  .contact-hero__title {
+    max-width: 11ch;
+    font-size: clamp(3.1rem, 7.6vw, 9.4rem);
+    line-height: 0.88;
+    letter-spacing: -0.045em;
+  }
+
+  .contact-hero__title em {
+    color: var(--lilac-deep);
+    font-style: italic;
+  }
+
+  .contact-hero__note {
+    max-width: 30ch;
+    justify-self: end;
+    padding-bottom: 0.4rem;
+    color: var(--muted);
+    font-size: clamp(0.78rem, 0.95vw, 0.9rem);
+    line-height: 1.65;
+  }
+
+  .contact-email {
+    margin-top: clamp(3rem, 7vw, 6rem);
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .contact-email__label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--muted);
+  }
+
+  .contact-email__status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.5rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .contact-email__status span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--lilac-deep);
+  }
+
+  .contact-email__row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-top: clamp(1rem, 2vw, 1.5rem);
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .contact-email__link {
+    font-family: var(--font-serif);
+    font-size: clamp(1.65rem, 4.8vw, 5.2rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    word-break: break-word;
+  }
+
+  .contact-email__copy {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--line);
+    font-size: 0.5rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    transition:
+      background-color 0.35s var(--ease),
+      border-color 0.35s var(--ease);
+  }
+
+  .contact-email__copy:hover {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .contact-email__copy-icon {
+    font-size: 0.8rem;
+    line-height: 0.6;
+  }
+
+  .contact-body {
+    padding-top: clamp(3rem, 7vw, 6rem);
+    padding-bottom: clamp(5rem, 11vw, 10rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .contact-panel {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .contact-block {
+    display: flex;
+    min-height: 13rem;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: clamp(1.2rem, 2.2vw, 1.7rem) clamp(0rem, 1.5vw, 1.2rem)
+      clamp(1.5rem, 2.6vw, 2rem) 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .contact-block:nth-child(odd) {
+    border-right: 1px solid var(--line);
+  }
+
+  .contact-block:nth-child(even) {
+    padding-left: clamp(1rem, 2.2vw, 1.7rem);
+  }
+
+  .contact-block__lead {
+    max-width: 18ch;
+    font-size: clamp(1.15rem, 1.6vw, 1.55rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .contact-block__link {
+    margin-top: auto;
+    align-self: flex-start;
+    font-size: 0.625rem;
+    letter-spacing: 0.05em;
+  }
+
+  .contact-block__meta {
+    color: var(--muted);
+    font-size: 0.68rem;
+    line-height: 1.55;
+  }
+
+  .contact-socials {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: auto;
+  }
+
+  .contact-socials a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.625rem;
+    letter-spacing: 0.06em;
+  }
+
+  .contact-socials span {
+    color: var(--lilac-deep);
+    font-size: 0.75rem;
+  }
+
+  .contact-note {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 1.5fr) 0.8fr;
+    gap: var(--gap);
+    align-items: start;
+    padding-top: clamp(3rem, 6vw, 5rem);
+    padding-bottom: clamp(5rem, 11vw, 10rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .contact-note__text {
+    max-width: 34ch;
+    font-size: clamp(1.4rem, 2.6vw, 2.7rem);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+
+  .contact-note__script {
+    justify-self: end;
+    padding-top: 0.4rem;
+    color: var(--lilac-deep);
+    font-family: var(--font-script);
+    font-size: clamp(1.5rem, 2.4vw, 2.4rem);
+    line-height: 1;
+    transform: rotate(-4deg);
+  }
+
+  @media (max-width: 900px) {
+    .contact-hero__body {
+      grid-template-columns: 1fr;
+      align-items: start;
+      gap: 1.5rem;
+    }
+
+    .contact-hero__note {
+      max-width: 38ch;
+      justify-self: start;
+      padding-bottom: 0;
+    }
+
+    .contact-note {
+      grid-template-columns: 1fr 1.4fr;
+    }
+
+    .contact-note__script {
+      display: none;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .contact-hero__title {
+      max-width: 12ch;
+    }
+
+    .contact-email__row {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .contact-email__link {
+      font-size: clamp(1.5rem, 7.7vw, 2.8rem);
+    }
+
+    .contact-body {
+      padding-top: 2.5rem;
+    }
+
+    .contact-panel {
+      grid-template-columns: 1fr;
+    }
+
+    .contact-block {
+      min-height: 0;
+      padding: 1.4rem 0;
+    }
+
+    .contact-block:nth-child(odd) {
+      border-right: 0;
+    }
+
+    .contact-block:nth-child(even) {
+      padding-left: 0;
+    }
+
+    .contact-block__lead {
+      max-width: 24ch;
+    }
+
+    .contact-note {
+      grid-template-columns: 1fr;
+    }
+
+    .contact-note__text {
+      max-width: 24ch;
+    }
+  }
+</style>
+
+<script>
+  const copyButton = document.querySelector<HTMLButtonElement>('[data-copy]');
+  const copyLabel = copyButton?.querySelector<HTMLElement>('[data-copy-label]');
+
+  copyButton?.addEventListener('click', async () => {
+    const email = copyButton.dataset.email ?? '';
+    if (!email) return;
+
+    const showCopied = () => {
+      if (!copyLabel) return;
+      const original = copyLabel.textContent ?? 'Copy email';
+      copyLabel.textContent = 'Copied ✓';
+      window.setTimeout(() => {
+        copyLabel.textContent = original;
+      }, 2000);
+    };
+
+    try {
+      await navigator.clipboard.writeText(email);
+      showCopied();
+    } catch {
+      const field = document.createElement('textarea');
+      field.value = email;
+      field.setAttribute('readonly', '');
+      field.style.position = 'fixed';
+      field.style.opacity = '0';
+      document.body.appendChild(field);
+      field.select();
+      document.execCommand('copy');
+      field.remove();
+      showCopied();
+    }
+  });
+</script>

@@ -1,0 +1,81 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Resolve site URL and base path
+        shell: bash
+        run: |
+          site_url="${{ vars.SITE_URL }}"
+          base_path="${{ vars.BASE_PATH }}"
+
+          if [ -z "$site_url" ]; then
+            site_url="https://${GITHUB_REPOSITORY_OWNER}.github.io"
+          fi
+
+          if [ -z "$base_path" ]; then
+            repo="${GITHUB_REPOSITORY#*/}"
+            if [ "$repo" = "${GITHUB_REPOSITORY_OWNER}.github.io" ]; then
+              base_path="/"
+            else
+              base_path="/$repo"
+            fi
+          fi
+
+          # Astro expects the base without a trailing slash (except for root).
+          case "$base_path" in
+            /) ;;
+            *) base_path="${base_path%/}" ;;
+          esac
+
+          echo "SITE_URL=$site_url" >> "$GITHUB_ENV"
+          echo "BASE_PATH=$base_path" >> "$GITHUB_ENV"
+
+      - name: Build site
+        run: npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

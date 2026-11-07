@@ -1,0 +1,152 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '../config';
+import { withBase } from '../lib/paths';
+---
+
+<BaseLayout
+  title="Not found"
+  description="This page slipped out of frame."
+  footer={false}
+>
+  <main id="main" class="notfound">
+    <div
+      class="notfound__media"
+      style={`background-image: url('${withBase('/media/posters/fiba-vol-02.jpg')}')`}
+      aria-hidden="true"
+    ></div>
+    <div class="notfound__shade" aria-hidden="true"></div>
+
+    <div class="notfound__inner wrap">
+      <p class="eyebrow">Error — 404</p>
+
+      <h1 class="notfound__title serif">
+        Lost<br />in <em>frame.</em>
+      </h1>
+
+      <p class="notfound__copy">
+        The page you were looking for has moved, wrapped, or never made the final cut.
+      </p>
+
+      <a class="notfound__link" href={withBase('/')} data-cursor="HOME">
+        Back to the beginning <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+
+    <div class="notfound__foot wrap">
+      <span>{siteConfig.brand.full}</span>
+      <span>Take another look</span>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .notfound {
+    position: relative;
+    display: flex;
+    height: 100svh;
+    min-height: 560px;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .notfound__media {
+    position: absolute;
+    inset: 0;
+    background-position: center;
+    background-size: cover;
+    filter: saturate(0.55) contrast(1.03);
+    opacity: 0.5;
+  }
+
+  .notfound__shade {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at center, rgba(9, 8, 7, 0.15) 20%, rgba(9, 8, 7, 0.78) 100%),
+      linear-gradient(to bottom, rgba(9, 8, 7, 0.45), transparent 40%, rgba(9, 8, 7, 0.65));
+  }
+
+  .notfound__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-bottom: 4rem;
+  }
+
+  .notfound__title {
+    margin-top: clamp(1.5rem, 4vw, 3rem);
+    font-size: clamp(4.5rem, 12vw, 14rem);
+    line-height: 0.8;
+    letter-spacing: -0.05em;
+  }
+
+  .notfound__title em {
+    color: var(--lilac);
+    font-style: italic;
+  }
+
+  .notfound__copy {
+    max-width: 34ch;
+    margin-top: clamp(1.5rem, 4vw, 3rem);
+    color: rgba(247, 243, 235, 0.7);
+    font-size: 0.85rem;
+    line-height: 1.65;
+  }
+
+  .notfound__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid rgba(247, 243, 235, 0.6);
+    font-size: 0.5625rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    transition:
+      color 0.3s linear,
+      border-color 0.3s linear;
+  }
+
+  .notfound__link span {
+    font-size: 0.9rem;
+    transition: transform 0.35s var(--ease);
+  }
+
+  .notfound__link:hover {
+    border-color: var(--lilac);
+    color: var(--lilac);
+  }
+
+  .notfound__link:hover span {
+    transform: translate(2px, -2px);
+  }
+
+  .notfound__foot {
+    position: absolute;
+    right: 0;
+    bottom: 1.5rem;
+    left: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 2rem;
+    color: rgba(247, 243, 235, 0.45);
+    font-size: 0.5rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 700px) {
+    .notfound__foot {
+      display: none;
+    }
+  }
+</style>

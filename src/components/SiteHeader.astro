@@ -1,0 +1,14 @@
+---
+import { siteConfig } from '../config';
+import { withBase } from '../lib/paths';
+
+const { brand, topLine } = siteConfig;
+---
+
+<header class="site-header">
+  <a class="wordmark" href={withBase('/')} aria-label={`${brand.full} — home`}>
+    {brand.full}
+  </a>
+
+  <p class="header-note">{topLine}</p>
+</header>

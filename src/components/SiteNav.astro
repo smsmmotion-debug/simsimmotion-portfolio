@@ -1,0 +1,68 @@
+---
+import { siteConfig } from '../config';
+import { withBase } from '../lib/paths';
+
+interface Props {
+  page?: 'home' | 'works' | 'info' | 'contact';
+}
+
+const { page } = Astro.props;
+
+const pageKeys: Record<string, string> = {
+  Home: 'home',
+  Works: 'works',
+  Info: 'info',
+  Contact: 'contact',
+};
+---
+
+<nav class="site-nav" aria-label="Primary">
+  <ul class="site-nav__list">
+    {
+      siteConfig.nav.map((item) => (
+        <li>
+          <a
+            class="site-nav__link"
+            href={withBase(item.href)}
+            aria-current={pageKeys[item.label] === page ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script>
+  const root = document.documentElement;
+  let lastY = window.scrollY;
+  let queued = false;
+
+  const syncNav = () => {
+    const y = window.scrollY;
+    const delta = y - lastY;
+    const isMobile = window.matchMedia('(max-width: 700px)').matches;
+
+    if (Math.abs(delta) > 6) {
+      root.classList.toggle('nav-hidden', isMobile && delta > 0 && y > 160);
+      lastY = y;
+    }
+
+    queued = false;
+  };
+
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (queued) return;
+      queued = true;
+      window.requestAnimationFrame(syncNav);
+    },
+    { passive: true },
+  );
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 700) root.classList.remove('nav-hidden');
+  });
+</script>

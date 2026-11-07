@@ -1,0 +1,50 @@
+---
+import { siteConfig } from '../config';
+import { withBase } from '../lib/paths';
+
+const year = new Date().getFullYear();
+const { brand, email, socials, tagline } = siteConfig;
+---
+
+<footer class="site-footer">
+  <div class="site-footer__top wrap">
+    <div>
+      <p class="eyebrow site-footer__kicker">{tagline}</p>
+      <a
+        class="site-footer__mail link-line"
+        href={`mailto:${email}`}
+        data-cursor="WRITE"
+      >
+        {email}
+      </a>
+    </div>
+
+    <a class="site-footer__cta" href={withBase('/contact/')} data-cursor="OPEN">
+      Work with me
+      <span aria-hidden="true">↗</span>
+    </a>
+  </div>
+
+  <div class="site-footer__brand" aria-hidden="true">
+    <span>{brand.first}</span>
+    <span>{brand.second}</span>
+  </div>
+
+  <div class="site-footer__bottom wrap">
+    <p>© {year} {brand.full}</p>
+
+    <nav class="site-footer__nav" aria-label="Social links">
+      {
+        socials.map((social) => (
+          <a href={social.href} target="_blank" rel="noopener noreferrer">
+            {social.label} <span aria-hidden="true">↗</span>
+          </a>
+        ))
+      }
+    </nav>
+
+    <a class="site-footer__back" href="#top">
+      Back to top <span aria-hidden="true">↑</span>
+    </a>
+  </div>
+</footer>
